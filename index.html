@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>十班TI测试 | 娱乐心理问卷</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Helvetica Neue', 'Noto Sans', sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            padding: 2rem 1rem;
+            transition: background 0.3s ease, box-shadow 0.2s;
+            min-height: 100vh;
+        }
+
+        /* 红色调主题 (陈旭结局) */
+        body.red-theme {
+            background: #3b0a0a;
+            background-image: radial-gradient(circle at 10% 20%, rgba(180, 40, 40, 0.25) 0%, #2c0707 90%);
+        }
+
+        body.red-theme .quiz-card {
+            background: #fff0f0;
+            border-left: 8px solid #c0392b;
+            box-shadow: 0 20px 35px -12px rgba(140, 20, 20, 0.5);
+        }
+
+        body.red-theme .result-card {
+            background: #fff4e8;
+            border: 1px solid #e6b0aa;
+        }
+
+        body.red-theme .btn-primary {
+            background: #b03a2e;
+            box-shadow: 0 4px 0 #6e2c1f;
+        }
+
+        body.red-theme .btn-primary:hover {
+            background: #942c20;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+        }
+
+        /* 主卡片 */
+        .quiz-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transition: all 0.2s;
+            padding: 1.8rem 2rem 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b3b5f, #1e2a3e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: inline-block;
+            margin-bottom: 0.25rem;
+        }
+
+        .sub {
+            color: #5b6e8c;
+            border-left: 3px solid #ffb347;
+            padding-left: 1rem;
+            margin: 0.5rem 0 1.8rem 0;
+            font-weight: 500;
+        }
+
+        .questions-area {
+            margin: 1.5rem 0 1rem;
+        }
+
+        .question-item {
+            background: #fafcff;
+            border-radius: 24px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9eef3;
+            transition: 0.1s;
+        }
+
+        .question-text {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #1f2a44;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .q-num {
+            background: #d9e6f5;
+            border-radius: 40px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #2c5282;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .option-radio {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: #ffffff;
+            border-radius: 60px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+
+        .option-radio:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateX(3px);
+        }
+
+        input[type="radio"] {
+            accent-color: #3b82f6;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option-text {
+            font-size: 0.95rem;
+            color: #1e293b;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        /* 按钮组 */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.8rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.15s;
+            background: #eef2ff;
+            color: #1e2f5a;
+        }
+
+        .btn-primary {
+            background: #2c3e66;
+            color: white;
+            box-shadow: 0 4px 0 #141c2c;
+        }
+
+        .btn-primary:hover {
+            background: #1f2f4f;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            border: 1px solid #cdd9f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        /* 结果卡片 */
+        .result-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.2);
+            transition: 0.2s;
+            border-top: 6px solid #ffae6e;
+        }
+
+        .result-title {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-quote {
+            font-size: 1.2rem;
+            font-style: italic;
+            background: #fef9e6;
+            padding: 0.7rem 1rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 0.75rem 0;
+        }
+
+        .rank-stats {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 8px 0;
+            border-bottom: 1px dashed #dce5f0;
+        }
+
+        .rank-name {
+            font-weight: 700;
+            width: 80px;
+        }
+
+        .rank-bar {
+            flex: 1;
+            margin: 0 12px;
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .rank-fill {
+            height: 100%;
+            width: 0%;
+            background: #3b82f6;
+            border-radius: 40px;
+        }
+
+        .rank-percent {
+            min-width: 70px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .warning-tip {
+            color: #e67e22;
+            background: #fff1e0;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #6c7a91;
+        }
+
+        @media (max-width: 640px) {
+            .quiz-card {
+                padding: 1.2rem;
+            }
+            .question-item {
+                padding: 1rem;
+            }
+            .option-text {
+                font-size: 0.85rem;
+            }
+            .result-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="quiz-card" id="quizCard">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <h1>📋 十班TI测试</h1>
+            <span style="background:#eef3ff; padding: 4px 12px; border-radius: 30px; font-size: 0.75rem;">🎭 娱乐向 · 随机题序</span>
+        </div>
+        <div class="sub">⚡ 你的每一次选择，折射独特光谱 → 最终揭示属于你的「林月蕾」「曾小巍」「金晖」</div>
+
+        <div id="questionsContainer" class="questions-area">
+            <!-- 动态随机顺序题目会注入这里 -->
+            <div style="text-align: center; padding: 2rem;">✨ 载入题目中... ✨</div>
+        </div>
+
+        <div class="action-bar">
+            <button id="resetBtn" class="btn-secondary">⟳ 重置所有选项</button>
+            <button id="submitBtn" class="btn-primary">🔮 揭示你的十班人格</button>
+        </div>
+        <div class="warning-tip" id="warningMsg" style="display: none;">⚠️ 请先完成所有题目，再查看结果～</div>
+    </div>
+
+    <div id="resultArea" class="result-card" style="display: none;">
+        <!-- 动态显示结果 -->
+    </div>
+</div>
+
+<script>
+    // ---------- 基于问题清单构建原始题库 (12题，完全保留内容) ----------
+    const RAW_QUESTIONS = [
+        {   // 1
+            text: "当你做到一道题，发现其表述模棱两可，你会()",
+            options: [
+                { text: "A. 如此简单的题，不需要做", attrs: ["林"] },
+                { text: "B. 嘲讽现在的老师，语文真是不行", attrs: ["曾"] },
+                { text: "C. 随便找种解释弄个答案出来", attrs: ["曾", "金"] },
+                { text: "D. 根据答案意淫一个过程", attrs: ["日"] }
+            ]
+        },
+        {   // 2
+            text: "当你上课时，发现老师可能做错了题，你会( )",
+            options: [
+                { text: "A. 大声呵制", attrs: ["日"] },
+                { text: "B. 拿起破头厚的书与老师打辩论赛", attrs: ["曾"] },
+                { text: "C. 讲得这么好笑可能其中有“道”", attrs: ["金"] },
+                { text: "D. 不必理会", attrs: ["林"] }
+            ]
+        },
+        {   // 3
+            text: "当你发现室友在凌晨3点依旧在看网课，你会()",
+            options: [
+                { text: "A. 室友的学习声使我突然入眠", attrs: ["曾"] },
+                { text: "B. 不许再看了！将室友扔出窗外", attrs: ["日"] },
+                { text: "C. 室友的学习声使我彻夜难眠.", attrs: ["林"] },
+                { text: "D. 好啊，TA看网课，我也看网课", attrs: ["金"] }
+            ]
+        },
+        {   // 4
+            text: "当你上课十分困倦，你会()",
+            options: [
+                { text: "A. 事到如今，先睡觉吧", attrs: ["曾"] },
+                { text: "B. 正是下楼跑圈的好时候", attrs: ["林"] },
+                { text: "C. 捉只甲虫玩也未尝不可", attrs: ["金"] },
+                { text: "D. 合理安排时间？那就是不上", attrs: ["日"] }
+            ]
+        },
+        {   // 5
+            text: "当你遇到不会做的题，你会()",
+            options: [
+                { text: "A. 就当作从来没有这些", attrs: ["金"] },
+                { text: "B. 什么垃圾作业，直接扔了", attrs: ["日"] },
+                { text: "C. 看看大学课本或许会有新发现", attrs: ["曾"] },
+                { text: "D. 不做出此题，我寝食难安", attrs: ["林"] }
+            ]
+        },
+        {   // 6
+            text: "当你在考试时遇到出错的问题，你会()",
+            options: [
+                { text: "A. 撕毁试卷", attrs: ["日"] },
+                { text: "B. 将书与论文扔到出题老师脸上", attrs: ["曾"] },
+                { text: "C. 傻又题目，写它作甚", attrs: ["金"] },
+                { text: "D. 事到如今先算个数出来", attrs: ["林"] }
+            ]
+        },
+        {   // 7
+            text: "你最赞同下面哪句话",
+            options: [
+                { text: "A. 我靠", attrs: ["金"] },
+                { text: "B. 算错不可怕", attrs: ["林"] },
+                { text: "C. 老师的语文不太好", attrs: ["曾"] },
+                { text: "D. 请各位同学安排好时间", attrs: ["日"] }
+            ]
+        },
+        {   // 8
+            text: "你认为数学的尽头是",
+            options: [
+                { text: "A. 计算", attrs: ["林"] },
+                { text: "B. 自学", attrs: ["林"] },
+                { text: "C. 玄学", attrs: ["金"] },
+                { text: "D. 哲学", attrs: ["曾"] }
+            ]
+        },
+        {   // 9  (原文本中"何认为化学的尽头是()"，清洗显示)
+            text: "你认为化学的尽头是()",
+            options: [
+                { text: "A. 数学", attrs: ["曾"] },
+                { text: "B. 语文", attrs: ["曾"] },
+                { text: "C. 计算", attrs: ["林"] },
+                { text: "D. 表达", attrs: ["金"] }
+            ]
+        },
+        {   // 10 题干去掉(7)
+            text: "你认为语文的尽头是",
+            options: [
+                { text: "A. 分析歧义", attrs: ["曾"] },
+                { text: "B. 写作拿奖", attrs: ["金"] },
+                { text: "C. 网剧编剧", attrs: ["金"] },
+                { text: "D. 质朴口语", attrs: ["林"] }
+            ]
+        },
+        {   // 11
+            text: "你最赞同下面哪句话",
+            options: [
+                { text: "A. 此题，我没有招", attrs: ["林"] },
+                { text: "B. 可用，大学知识", attrs: ["曾"] },
+                { text: "C. 早读，不得迟到", attrs: ["日"] },
+                { text: "D. 北大，强基面试", attrs: ["金"] }
+            ]
+        },
+        {   // 12
+            text: "九个太阳如果不小心掉到你面前，你会()",
+            options: [
+                { text: "A. 扔到楼下伪装作学生逃楼", attrs: ["日"] },
+                { text: "B. 反复举起用以锻炼肌肉", attrs: ["林"] },
+                { text: "C. 一边听课一边举着太阳跑5千米", attrs: ["金"] },
+                { text: "D. 放在办公室珍藏给之后的学生备用", attrs: ["曾"] }
+            ]
+        }
+    ];
+
+    // ---------- 全局变量 ----------
+    let shuffledQuestions = [];        // 随机顺序后的题目数组 (每个元素包含 text, options, originalIndex可选)
+    let userAnswers = [];             // 每个问题当前选择的选项索引 (null表示未选) , 长度与shuffledQuestions相同
+    let currentResultMode = null;     // 用于存储最后计算结果避免重复渲染闪烁, 但每次提交重新计算
+
+    // 辅助: 深拷贝题目
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // 初始化/重置题目顺序（仅在页面加载时随机一次，重置不清顺序，只清答案）
+    function initQuestionsOrder() {
+        // 拷贝原始题库
+        const cloned = RAW_QUESTIONS.map((q, idx) => ({
+            text: q.text,
+            options: q.options.map(opt => ({ text: opt.text, attrs: [...opt.attrs] })),
+            originalId: idx
+        }));
+        shuffledQuestions = shuffleArray(cloned);
+        // 重置答案数组
+        userAnswers = new Array(shuffledQuestions.length).fill(null);
+    }
+
+    // 渲染题目到DOM (基于shuffledQuestions 和 userAnswers)
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        if (!container) return;
+        if (!shuffledQuestions.length) {
+            container.innerHTML = '<div style="text-align:center">⚠️ 题目加载失败</div>';
+            return;
+        }
+
+        let html = '';
+        shuffledQuestions.forEach((q, qIdx) => {
+            const selectedIndex = userAnswers[qIdx]; // null 或 index
+            const optionsHtml = q.options.map((opt, optIdx) => {
+                const isChecked = (selectedIndex === optIdx);
+                return `
+                    <label class="option-radio" data-qidx="${qIdx}" data-oidx="${optIdx}">
+                        <input type="radio" name="q_${qIdx}" value="${optIdx}" ${isChecked ? 'checked' : ''}>
+                        <span class="option-text">${escapeHtml(opt.text)}</span>
+                    </label>
+                `;
+            }).join('');
+            html += `
+                <div class="question-item" data-qidx="${qIdx}">
+                    <div class="question-text">
+                        <span class="q-num">🔖 Q${qIdx+1}</span>
+                        <span>${escapeHtml(q.text)}</span>
+                    </div>
+                    <div class="options" data-qgroup="${qIdx}">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+
+        // 绑定change事件 (事件委托)
+        container.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const label = radio.closest('.option-radio');
+                if (!label) return;
+                const qIdx = parseInt(label.dataset.qidx);
+                const optIdx = parseInt(label.dataset.oidx);
+                if (!isNaN(qIdx) && !isNaN(optIdx)) {
+                    userAnswers[qIdx] = optIdx;
+                    // 清除任何残留警告
+                    const warn = document.getElementById('warningMsg');
+                    if(warn) warn.style.display = 'none';
+                    // 可选：实时隐藏旧的结果区域，因为答案变更，结果失效（但保留用户重新提交）
+                    const resultDiv = document.getElementById('resultArea');
+                    if(resultDiv) resultDiv.style.display = 'none';
+                    // 移除红色主题 （因为新答案可能导致不同结果，先清除风格）
+                    document.body.classList.remove('red-theme');
+                }
+            });
+        });
+    }
+
+    // 简单防XSS
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // 根据当前userAnswers计算 曾,林,金,日的数值
+    function computeScores() {
+        let scores = { "曾": 0, "林": 0, "金": 0, "日": 0 };
+        for (let i = 0; i < shuffledQuestions.length; i++) {
+            const selectedOptIdx = userAnswers[i];
+            if (selectedOptIdx !== null) {
+                const option = shuffledQuestions[i].options[selectedOptIdx];
+                if (option && option.attrs) {
+                    for (let attr of option.attrs) {
+                        // 每个属性增加1 (如果是双属性每个+0.5)
+                        if (option.attrs.length === 1) {
+                            scores[attr] += 1;
+                        } else if (option.attrs.length === 2) {
+                            scores[attr] += 0.5;
+                        } else {
+                            // 理论没更多, 按安全处理
+                            scores[attr] += 1;
+                        }
+                    }
+                }
+            }
+        }
+        // 处理浮点精度保留两位小数
+        for(let k in scores){
+            scores[k] = Math.round(scores[k] * 10) / 10;
+        }
+        return scores;
+    }
+
+    // 根据曾林金得分决定主要人物 (优先级: 金 > 曾 > 林)
+    function getMainCharacter(zeng, lin, jin) {
+        let maxVal = Math.max(zeng, lin, jin);
+        let candidates = [];
+        if (jin === maxVal) candidates.push("金");
+        if (zeng === maxVal) candidates.push("曾");
+        if (lin === maxVal) candidates.push("林");
+        // 按照优先顺序金 > 曾 > 林返回第一个匹配
+        if (candidates.includes("金")) return "金";
+        if (candidates.includes("曾")) return "曾";
+        if (candidates.includes("林")) return "林";
+        return "曾"; // fallback
+    }
+
+    // 显示结果主逻辑 (基于当前得分)
+    function displayResult() {
+        // 校验是否全部题目已完成
+        const allSelected = userAnswers.every(idx => idx !== null);
+        const warningDiv = document.getElementById('warningMsg');
+        if (!allSelected) {
+            warningDiv.style.display = 'block';
+            warningDiv.innerText = '⚠️ 请先完成所有12道题目，再揭示人格～';
+            return false;
+        }
+        warningDiv.style.display = 'none';
+
+        const scores = computeScores();
+        const dayVal = scores["日"];
+        const resultDiv = document.getElementById('resultArea');
+        
+        // 重置主题样式 (先移除红色)
+        document.body.classList.remove('red-theme');
+        
+        // 情况1: 日属性 === 9 (精确等于9, 由于浮点误差采用差值<1e-6)
+        const isDayNine = Math.abs(dayVal - 9) < 1e-6;
+        
+        if (isDayNine) {
+            // 陈旭结局 + 红色调主界面
+            document.body.classList.add('red-theme');
+            // 不显示曾林金相关内容
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div style="text-align: center;">
+                    <div class="result-title" style="color:#b53b2e;">✨ 陈旭 · 隐藏之人 ✨</div>
+                    <div class="result-quote" style="background:#fbe9e7; color:#a13023;">“同学们”</div>
+                    <div style="margin-top: 1rem; font-size: 1rem; background:#ffefea; padding: 0.8rem; border-radius: 60px;">
+                        🌟 日之力量集满九分，你触发了特殊结局 · 陈旭降临 🌟
+                    </div>
+                </div>
+            `;
+            return true;
+        } 
+        
+        // 普通结局: 日 <= 9 (包括小于8或者小于9非精确9)
+        // 提取曾林金分数
+        let zeng = scores["曾"] || 0;
+        let lin = scores["林"] || 0;
+        let jin = scores["金"] || 0;
+        const total = zeng + lin + jin;
+        
+        // 计算百分比(保留整数)
+        const percent = (val) => total === 0 ? 0 : Math.round((val / total) * 100);
+        const pZeng = percent(zeng);
+        const pLin = percent(lin);
+        const pJin = percent(jin);
+        
+        // 构建排名列表: 每一项{name, value, percent, key}
+        let rankItems = [
+            { name: "曾小巍", key: "曾", percent: pZeng },
+            { name: "林月蕾", key: "林", percent: pLin },
+            { name: "金晖", key: "金", percent: pJin }
+        ];
+        // 排序: 按得分降序，得分相同按优先级 金 > 曾 > 林（但排序显示时同分情况下，可保证排名展示顺序依照得分，但为了文字排名美观按得分优先）
+        rankItems.sort((a,b) => {
+            if (a.value !== b.value) return b.value - a.value;
+            const order = { "金": 3, "曾": 2, "林": 1 };
+            return order[b.key] - order[a.key];
+        });
+        
+        // 确定主要人物
+        const mainKey = getMainCharacter(zeng, lin, jin);
+        let mainName = "", mainQuote = "";
+        if (mainKey === "曾") { mainName = "曾小巍"; mainQuote = "化学老师的语文不太好"; }
+        else if (mainKey === "金") { mainName = "金晖"; mainQuote = "我靠"; }
+        else { mainName = "林月蕾"; mainQuote = "要会自学"; }
+        
+        // 构建排名HTML
+        let rankHtml = `<div class="rank-stats"><div style="font-weight:700; margin-bottom:10px;">📊 人格光谱排名 (曾·林·金)</div>`;
+        rankItems.forEach(item => {
+            const barWidth = item.percent;
+            rankHtml += `
+                <div class="rank-item">
+                    <span class="rank-name">${item.name}</span>
+                    <div class="rank-bar"><div class="rank-fill" style="width: ${barWidth}%; background: ${item.key === '金'?'#f5b042':(item.key==='曾'?'#5f9ea0':'#87b9d9')};"></div></div>
+                    <span class="rank-percent"> ${item.percent}%</span>
+                </div>
+            `;
+        });
+        rankHtml += `</div>`;
+        
+        const finalHtml = `
+            <div>
+                <div class="result-title">🏆 你的十班人格 · ${mainName}</div>
+                <div class="result-quote">“${mainQuote}”</div>
+                ${rankHtml}
+                
+                </div>
+            </div>
+        `;
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = finalHtml;
+        return true;
+    }
+    
+    // 重置所有答案 (不清除随机顺序，只清除所有已选radio)
+    function resetAllAnswers() {
+        for (let i = 0; i < userAnswers.length; i++) {
+            userAnswers[i] = null;
+        }
+        // 重新渲染UI，清空所有选中样式
+        renderQuestions();
+        // 隐藏结果面板
+        const resultDiv = document.getElementById('resultArea');
+        if(resultDiv) resultDiv.style.display = 'none';
+        const warningDiv = document.getElementById('warningMsg');
+        if(warningDiv) warningDiv.style.display = 'none';
+        // 移除红色主题
+        document.body.classList.remove('red-theme');
+    }
+    
+    // 页面加载和重置事件绑定
+    document.addEventListener('DOMContentLoaded', () => {
+        initQuestionsOrder();    // 随机顺序 + 答案空
+        renderQuestions();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        submitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            displayResult();
+        });
+        
+        resetBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetAllAnswers();
+        });
+        
+        // 任何选项变化时如果之前显示错误提示，实时隐藏提醒
+        const container = document.getElementById('questionsContainer');
+        if(container){
+            container.addEventListener('change', (e) => {
+                const warn = document.getElementById('warningMsg');
+                if(warn && warn.style.display === 'block') warn.style.display = 'none';
+                const resultDiv = document.getElementById('resultArea');
+                if(resultDiv && resultDiv.style.display === 'block') resultDiv.style.display = 'none';
+                document.body.classList.remove('red-theme');
+            });
+        }
+    });
+</script>
+</body>
+</html>
